@@ -1,22 +1,53 @@
 {
   "name": "astro-canonical",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "description": "Build-time canonical URL validation for Astro. Enforces site origin and trailing slash rules and fails the build on SEO mistakes.",
+  "license": "MIT",
   "type": "module",
+
   "exports": {
-    ".": "./index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
   },
+
   "files": [
-    "src",
-    "index.ts"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
-  "keywords": [
-    "withastro"
-  ],
-  "scripts": {},
-  "devDependencies": {
-    "astro": "^5.16.6"
+
+  "scripts": {
+    "build": "tsup index.ts --format esm --dts --clean"
   },
+
+  "keywords": [
+    "astro",
+    "withastro",
+    "astro-integration",
+    "seo",
+    "canonical",
+    "canonical-url",
+    "astro-canonical"
+  ],
+
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/velohost/astro-canonical.git"
+  },
+
+  "homepage": "https://github.com/velohost/astro-canonical",
+  "bugs": {
+    "url": "https://github.com/velohost/astro-canonical/issues"
+  },
+
   "peerDependencies": {
-    "astro": "^4.0.0"
+    "astro": "^4.0.0 || ^5.0.0"
+  },
+
+  "devDependencies": {
+    "astro": "^5.16.6",
+    "tsup": "^8.5.1"
   }
 }
