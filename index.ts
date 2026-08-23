@@ -1,12 +1,25 @@
 import type { AstroIntegration } from "astro";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 type InvalidCanonical = {
   file: string;
   canonical: string;
   problems: string[];
 };
+
+function resolveDirPath(dir: URL | string): string {
+  if (dir instanceof URL) {
+    return fileURLToPath(dir);
+  }
+
+  if (dir.startsWith("file:")) {
+    return fileURLToPath(dir);
+  }
+
+  return dir;
+}
 
 export default function astroCanonical(): AstroIntegration {
   let site: string | undefined;
@@ -33,7 +46,7 @@ export default function astroCanonical(): AstroIntegration {
 
       "astro:build:done": async ({ dir }) => {
         const resolvedSite = site!;
-        const distDir = new URL(dir).pathname;
+        const distDir = resolveDirPath(dir);
 
         const htmlFiles: string[] = [];
         const invalidCanonicals: InvalidCanonical[] = [];
@@ -57,10 +70,12 @@ export default function astroCanonical(): AstroIntegration {
         let pagesWithCanonical = 0;
 
         for (const file of htmlFiles) {
+          const normalizedFile = file.replace(/\\/g, "/");
+
           // Ignore 404 pages
           if (
-            file.endsWith("/404.html") ||
-            file.endsWith("/404/index.html")
+            normalizedFile.endsWith("/404.html") ||
+            normalizedFile.endsWith("/404/index.html")
           ) {
             continue;
           }
@@ -80,9 +95,18 @@ export default function astroCanonical(): AstroIntegration {
             continue;
           }
 
+          const canonical = match[1];
+          if (!canonical) {
+            invalidCanonicals.push({
+              file: file.replace(distDir, "").replace(/\\/g, "/"),
+              canonical: "(missing)",
+              problems: ["missing canonical href value"],
+            });
+            continue;
+          }
+
           pagesWithCanonical++;
 
-          const canonical = match[1];
           const problems: string[] = [];
 
           // Must be absolute + correct site
