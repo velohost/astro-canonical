@@ -138,6 +138,12 @@ These issues are often invisible until SEO damage is done.
 
 ---
 
+## Contributors
+
+Thanks to everyone who has contributed to `astro-canonical`:
+
+- [@flcdrg](https://github.com/flcdrg) — [Windows path compatibility fix](https://github.com/velohost/astro-canonical/pull/2)
+
 ## License
 
 MIT
